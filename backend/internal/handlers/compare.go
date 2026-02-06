@@ -44,63 +44,28 @@ func CompareWeather(c *gin.Context) {
 	}
 
 	// Slice donde se juntan los resultados (fan-in)
-	results := make([]weather.CityWeather, 0)
+	successful := make([]weather.CityWeather, 0)
+	failed := make([]weather.CityWeather, 0)
 
 	for i := 0; i < validCities; i++ {
 		result := <-resultsChan
-		results = append(results, result)
-	}
 
-	// Condiciones extras
+	// Si la ciudad falló, la separamos
+		if result.Error != "" {
+			failed = append(failed, result)
+		} else {
+			// Si salió bien, va al grupo de exitosas
+			successful = append(successful, result)
+		}	
+}
+	// Usamos nuestra función Aggregate para calcular resúmenes
+	summary := weather.Aggregate(successful)
 
-	var (
-		totalTemp  float64
-		totalHum   int
-		totalWind  float64
-		hottest    weather.CityWeather
-		coldest    weather.CityWeather
-		windiest   weather.CityWeather
-		byCondition = make(map[string][]string)
-	)
-
-	for i, r := range results {
-		totalTemp += r.Temperature
-		totalHum += r.Humidity
-		totalWind += r.WindSpeed
-
-		if i == 0 || r.Temperature > hottest.Temperature {
-			hottest = r
-		}
-		if i == 0 || r.Temperature < coldest.Temperature {
-			coldest = r
-		}
-		if i == 0 || r.WindSpeed > windiest.WindSpeed {
-			windiest = r
-		}
-
-		byCondition[r.Condition] = append(byCondition[r.Condition], r.CityName)
-	}
-
-	// Promedios
-	count := float64(len(results))
-	averages := gin.H{
-		"temperature": totalTemp / count,
-		"humidity":    float64(totalHum) / count,
-		"wind_speed":  totalWind / count,
-	}
-
-	// Respuesta final
+	// Devolvemos JSON
 	c.JSON(http.StatusOK, gin.H{
-		"cities": results,
-		"summary": gin.H{
-			"averages": averages,
-			"extremes": gin.H{
-				"hottest":  hottest.CityName,
-				"coldest":  coldest.CityName,
-				"windiest": windiest.CityName,
-			},
-			"by_condition": byCondition,
-		},
+		"cities":  successful,
+		"errors":  failed,
+		"summary": summary,
 	})
 }
 
@@ -109,6 +74,6 @@ func CompareWeather(c *gin.Context) {
 //leer las request (IDs) de las ciudades.
 //crear el channel (canal) para recibir resultados.
 //lanzar una goroutine por cada ciudad válida (fan-out).
-//esperar a que todas las goroutines terminen y envíen resultados (fan-in).
-//procesar los resultados
-//responden JSON
+//esperar a que todas las goroutines terminen y envíen resultados (fan-in), separanto exitosos de fallidos.
+//se calcula agregados usando aggregate.
+//respondemos JSON con ciudades exitosas, errores y resumen.

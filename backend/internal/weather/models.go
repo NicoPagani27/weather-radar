@@ -9,4 +9,8 @@ type CityWeather struct {
 	Humidity    int
 	WindSpeed   float64
 	Condition   string
+
+	// Error contiene un mensaje si la consulta falló.
+	// Si está vacío, la ciudad se procesó correctamente.
+	Error string
 }

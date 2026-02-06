@@ -6,23 +6,24 @@ import "weather-radar/backend/internal/cities"
 // envía el resultado al channel (canal).
 // Esta función se ejecuta como goroutine.
 
-func FetchCityWeather(city cities.City, ch chan<- CityWeather) {
+func FetchCityWeather(city City, ch chan CityWeather) {
 	data, err := GetCurrentWeather(city.Latitude, city.Longitude)
 	if err != nil {
-		// En este caso no enviamos nada
-		// (podría mejorarse con manejo de errores)
+		ch <- CityWeather{
+			CityID:   city.ID,
+			CityName: city.Name,
+			Error:    err.Error(),
+		}
 		return
 	}
 
-	result := CityWeather{
+	ch <- CityWeather{
 		CityID:      city.ID,
 		CityName:    city.Name,
 		Temperature: data.Current.Temperature,
 		Humidity:    data.Current.Humidity,
 		WindSpeed:   data.Current.WindSpeed,
-		Condition:   WeatherCodeToCondition(data.Current.WeatherCode),
+		WeatherCode: data.Current.WeatherCode,
 	}
-
-	// fan-in(junto resultados) ---> se envía el resultado al channel compartido 
-	ch <- result
 }
+
