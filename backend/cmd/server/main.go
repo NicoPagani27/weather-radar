@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	// Handlers HTTP de la aplicación
 	"weather-radar/backend/internal/handlers"
 	"github.com/gin-gonic/gin"
 )
@@ -16,10 +17,13 @@ func main() {
 			"message": "pong",
 		})
 	})
-
+	// Grupo de rutas bajo /api para mantener ordenada la API
 	api := router.Group("/api")
 	{
+		// Devuelve la lista de ciudades disponibles
 		api.GET("/cities", handlers.GetCities)
+		// Devuelve el clima actual de una ciudad específica
+		api.GET("/weather/:cityId", handlers.GetWeatherByCity)
 	}
 	// Levanto el servidor en el puerto 8080
 	router.Run(":8080")

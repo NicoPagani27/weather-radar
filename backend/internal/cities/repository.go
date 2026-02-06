@@ -1,5 +1,7 @@
 package cities
-
+// GetAll devuelve la lista de ciudades disponibles.
+// Las ciudades están hardcodeadas
+// para evitar el uso de base de datos (precargadas).
 func GetAll() []City {
 	return []City{
 		{
@@ -39,4 +41,16 @@ func GetAll() []City {
 			Longitude: -99.13,
 		},
 	}
+}
+
+// GetByID busca una ciudad por su ID.
+// Devuelve la ciudad y un booleano indicando si fue encontrada.
+
+func GetByID(id string) (City, bool) {
+	for _, city := range GetAll() {
+		if city.ID == id {
+			return city, true
+		}
+	}
+	return City{}, false
 }

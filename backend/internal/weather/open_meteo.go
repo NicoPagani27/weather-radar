@@ -1,0 +1,44 @@
+package weather
+
+import (
+	"encoding/json"
+	"fmt"
+	"net/http"
+)
+
+// OpenMeteoResponse representa únicamente
+// los campos que nos interesan de la respuesta
+// de la API.
+
+type OpenMeteoResponse struct {
+	Current struct {
+		Temperature float64 `json:"temperature_2m"`
+		Humidity    int     `json:"relative_humidity_2m"`
+		WindSpeed   float64 `json:"wind_speed_10m"`
+		WeatherCode int     `json:"weather_code"`
+	} `json:"current"`
+}
+
+// GetCurrentWeather consulta la API
+// usando latitud y longitud y devuelve el clima actual.
+
+func GetCurrentWeather(lat, lon float64) (OpenMeteoResponse, error) {
+	url := fmt.Sprintf(
+		"https://api.open-meteo.com/v1/forecast?latitude=%f&longitude=%f&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&timezone=auto",
+		lat,
+		lon,
+	)
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return OpenMeteoResponse{}, err
+	}
+	defer resp.Body.Close()
+
+	var data OpenMeteoResponse
+	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+		return OpenMeteoResponse{}, err
+	}
+
+	return data, nil
+}
