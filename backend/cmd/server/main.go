@@ -22,8 +22,12 @@ func main() {
 	{
 		// Devuelve la lista de ciudades disponibles
 		api.GET("/cities", handlers.GetCities)
+
 		// Devuelve el clima actual de una ciudad específica
 		api.GET("/weather/:cityId", handlers.GetWeatherByCity)
+
+		// Compara el clima de lista de ciudades
+		api.POST("/weather/compare", handlers.CompareWeather)
 	}
 	// Levanto el servidor en el puerto 8080
 	router.Run(":8080")

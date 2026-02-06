@@ -23,18 +23,19 @@ type OpenMeteoResponse struct {
 // usando latitud y longitud y devuelve el clima actual.
 
 func GetCurrentWeather(lat, lon float64) (OpenMeteoResponse, error) {
+	// se arma la url de la api
 	url := fmt.Sprintf(
 		"https://api.open-meteo.com/v1/forecast?latitude=%f&longitude=%f&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&timezone=auto",
 		lat,
 		lon,
 	)
-
+	//realiza la request HTTP
 	resp, err := http.Get(url)
 	if err != nil {
 		return OpenMeteoResponse{}, err
 	}
 	defer resp.Body.Close()
-
+	//Se decodifica la respuesta JSON
 	var data OpenMeteoResponse
 	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
 		return OpenMeteoResponse{}, err

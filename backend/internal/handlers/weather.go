@@ -14,8 +14,9 @@ import (
 // Recibe el cityId por URL, busca la ciudad y consulta en la api.
 
 func GetWeatherByCity(c *gin.Context) {
+	//obtengo el ID de la ciudad desde la URL
 	cityID := c.Param("cityId")
-
+	//busco la ciudad 
 	city, found := cities.GetByID(cityID)
 	if !found {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -24,6 +25,8 @@ func GetWeatherByCity(c *gin.Context) {
 		return
 	}
 
+	// Se consulta el clima actual usando la API externa
+	
 	data, err := weather.GetCurrentWeather(city.Latitude, city.Longitude)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
