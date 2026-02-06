@@ -7,6 +7,7 @@ type CityWeather struct {
 	CityName    string
 	Temperature float64
 	Humidity    int
+	WeatherCode int
 	WindSpeed   float64
 	Condition   string
 
