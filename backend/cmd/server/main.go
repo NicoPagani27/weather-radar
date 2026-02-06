@@ -2,7 +2,7 @@ package main
 
 import (
 	"net/http"
-
+	"weather-radar/backend/internal/handlers"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,6 +17,19 @@ func main() {
 		})
 	})
 
+	api := router.Group("/api")
+	{
+		api.GET("/cities", handlers.GetCities)
+	}
 	// Levanto el servidor en el puerto 8080
 	router.Run(":8080")
 }
+
+
+
+
+
+
+
+
+
