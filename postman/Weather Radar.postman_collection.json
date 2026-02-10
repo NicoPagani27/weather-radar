@@ -1,0 +1,85 @@
+{
+  "info": {
+    "_postman_id": "62e7e08e-e0f9-421d-9d22-61fe92aaabaf",
+    "name": "Weather Radar",
+    "description": "Carpeta para probar los endpoints del backend Weather Radar",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52268130"
+  },
+  "item": [
+    {
+      "name": "GET Cities",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/cities",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "cities"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET Weather by City",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/weather/cordoba",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "weather",
+            "cordoba"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Compare Weather",
+      "protocolProfileBehavior": {
+        "disabledSystemHeaders": {}
+      },
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"city_ids\": [\"cordoba\", \"buenos_aires\", \"rosario\", \"new_york\"]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/weather/compare",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "weather",
+            "compare"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
