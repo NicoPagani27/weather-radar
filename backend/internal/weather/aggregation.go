@@ -12,6 +12,14 @@ type AggregationResult struct {
 // Aggregate recibe un slice de CityWeather y devuelve
 // los valores agregados que necesitamos para el resumen
 func Aggregate(results []CityWeather) AggregationResult {
+	// Validación: si no hay resultados, devolver estructura vacía
+	if len(results) == 0 {
+		return AggregationResult{
+			Averages:    make(map[string]float64),
+			Extremes:    make(map[string]string),
+			ByCondition: make(map[string][]string),
+		}
+	}
 
 	var totalTemp float64
 	var totalHum int

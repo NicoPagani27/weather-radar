@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"context"
 	"net/http"
+	"time"
 
 	"weather-radar/backend/internal/cities"
 	"weather-radar/backend/internal/weather"
@@ -26,8 +28,20 @@ func CompareWeather(c *gin.Context) {
 		return
 	}
 
-	// Canal donde todas las goroutines enviarán resultados
-	resultsChan := make(chan weather.CityWeather)
+	// Validación: límite máximo de ciudades
+	if len(request.CityIDs) > 20 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "máximo 20 ciudades permitidas",
+		})
+		return
+	}
+
+	// Canal con buffer para evitar deadlock
+	resultsChan := make(chan weather.CityWeather, len(request.CityIDs))
+
+	// Crear context con timeout de 5 segundos
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	// Contador de ciudades válidas puede no haber validas
 	validCities := 0
@@ -40,7 +54,7 @@ func CompareWeather(c *gin.Context) {
 		}
 
 		validCities++
-		go weather.FetchCityWeather(city, resultsChan)
+		go weather.FetchCityWeatherWithContext(ctx, city, resultsChan)
 	}
 
 	// Slice donde se juntan los resultados (fan-in)

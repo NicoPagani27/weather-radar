@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"weather-radar/backend/internal/cities"
@@ -29,6 +30,8 @@ func GetWeatherByCity(c *gin.Context) {
 	
 	data, err := weather.GetCurrentWeather(city.Latitude, city.Longitude)
 	if err != nil {
+		// Loguear el error real para debugging
+		fmt.Printf("Error consultando clima para %s: %v\n", city.Name, err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "error consultando clima",
 		})
