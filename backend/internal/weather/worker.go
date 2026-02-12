@@ -24,6 +24,6 @@ func FetchCityWeather(city cities.City, ch chan CityWeather) {
 		Humidity:    data.Current.Humidity,
 		WindSpeed:   data.Current.WindSpeed,
 		WeatherCode: data.Current.WeatherCode,
+		Condition:   WeatherCodeToCondition(data.Current.WeatherCode),
 	}
 }
-
