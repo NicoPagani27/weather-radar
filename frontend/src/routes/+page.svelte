@@ -129,16 +129,24 @@
 
   {#if result}
     <!-- Tarjetas de ciudades -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10" style="margin-top: 6rem; margin-bottom: 4rem; width: calc(100% - 4rem); max-width: 1400px;">
-      {#each result.cities as city}
-        <CityCard {city} />
-      {/each}
-    </div>
+    {#if (result.cities ?? []).length > 0}
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10" style="margin-top: 6rem; margin-bottom: 4rem; width: calc(100% - 4rem); max-width: 1400px;">
+        {#each result.cities ?? [] as city}
+          <CityCard {city} />
+        {/each}
+      </div>
+    {:else}
+      <div class="bg-yellow-500/90 backdrop-blur-sm text-white px-6 py-4 rounded-2xl mb-6 shadow-lg" style="margin-top: 4rem;">
+        <p class="font-medium">⚠️ No se pudo obtener información del clima para las ciudades seleccionadas</p>
+      </div>
+    {/if}
 
     <!-- Panel de resumen -->
-    <div style="width: calc(100% - 4rem); max-width: 1400px; margin-bottom: 4rem;">
-      <SummaryPanel summary={result.summary} />
-    </div>
+    {#if result.summary && (result.cities ?? []).length > 0}
+      <div style="width: calc(100% - 4rem); max-width: 1400px; margin-bottom: 4rem;">
+        <SummaryPanel summary={result.summary} />
+      </div>
+    {/if}
   {/if}
 </div>
 
